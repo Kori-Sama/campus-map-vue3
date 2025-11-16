@@ -22,11 +22,15 @@ function loadBaiduMap() {
 
         const script = document.createElement('script')
         script.type = 'text/javascript'
-        script.src = `https://api.map.baidu.com/api?v=1.0&type=webgl&ak=${ak}`
+        script.src = `https://api.map.baidu.com/api?v=1.0&type=webgl&ak=${ak}&callback=initBaiduMap`
         script.onerror = reject
-        script.onload = () => {
+
+        // 定义全局回调函数
+        window.initBaiduMap = () => {
             resolve(window.BMapGL)
+            delete window.initBaiduMap
         }
+
         document.head.appendChild(script)
     })
 }
