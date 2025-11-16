@@ -41,6 +41,14 @@
         >
           3D
         </button>
+        <!-- 自行车高峰路线开关 -->
+        <button
+          :class="['control', { active: showBikeRoutes }]"
+          @click="toggleBikeRoutes"
+          title="显示/隐藏校园自行车高峰路线"
+        >
+          🚴 高峰路线
+        </button>
         <button class="control" @click="showNavModal = true">地图导航</button>
       </div>
 
@@ -228,6 +236,10 @@ const selectedOrigin = reactive({ name: "", point: null });
 const selectedDestination = reactive({ name: "", point: null });
 let currentRoute = null;
 const routeMarkers = [];
+// 自行车高峰路线相关状态
+const showBikeRoutes = ref(false); // UI 显示状态
+const bikeRouteOverlays = []; // 保存绘制的 Polyline 覆盖物
+const bikeRoutesLoaded = ref(false); // 是否已加载一次
 // 统一地点配置（从 JSON 加载）
 // 构建 id => 数据 的映射与 BMapGL 点位缓存
 const placeMap = {};
@@ -927,6 +939,118 @@ function clearNavigation() {
   }
   currentRoute = null;
 }
+
+// ================== 自行车高峰路线功能 ==================
+function toggleBikeRoutes() {
+  showBikeRoutes.value = !showBikeRoutes.value;
+  if (showBikeRoutes.value) {
+    if (!bikeRoutesLoaded.value) {
+      loadBikePeakRoutes();
+    } else {
+      // 已加载过则直接重新添加 overlay（如果被清理）
+      bikeRouteOverlays.forEach((o) => {
+        try {
+          map.addOverlay(o);
+        } catch (e) {}
+      });
+    }
+  } else {
+    clearBikeRoutes();
+  }
+}
+
+function loadBikePeakRoutes() {
+  if (typeof BMapGL === "undefined" || !map) {
+    alert("地图尚未初始化，无法加载自行车路线");
+    return;
+  }
+
+  const pairs = [
+    {
+      origin: "天佑斋北区",
+      dest: "西南交通大学一号教学楼",
+      color: "#FF5722", // 橙红色
+    },
+    {
+      origin: "西南交通大学犀浦校区二食堂",
+      dest: "西南交通大学一号教学楼",
+      color: "#2196F3", // 蓝色
+    },
+  ];
+
+  pairs.forEach((pair) => {
+    try {
+      const riding = new BMapGL.RidingRoute(map, {
+        renderOptions: {}, // 不直接渲染默认结果，便于自定义样式
+        onSearchComplete: function (results) {
+          try {
+            if (results && results.getNumPlans && results.getNumPlans() > 0) {
+              const plan = results.getPlan(0);
+              // 获取路线集合（不同版本 API 有差异，做兼容）
+              const routes = plan.getRoutes
+                ? plan.getRoutes()
+                : plan.getRoute
+                ? [plan.getRoute(0)]
+                : [];
+              if (!routes.length && plan.getPath) {
+                // 兜底：某些情况下直接有 path
+                const path = plan.getPath();
+                if (Array.isArray(path) && path.length) {
+                  drawBikePolyline(path, pair.color, pair.origin, pair.dest);
+                }
+              }
+              routes.forEach((r) => {
+                try {
+                  const path = r.getPath ? r.getPath() : [];
+                  if (Array.isArray(path) && path.length) {
+                    drawBikePolyline(path, pair.color, pair.origin, pair.dest);
+                  }
+                } catch (ie) {}
+              });
+            } else {
+              console.warn("未找到骑行路线", pair);
+            }
+          } catch (e) {
+            console.warn("解析骑行路线失败", e);
+          }
+        },
+      });
+      riding.search(pair.origin, pair.dest);
+    } catch (e) {
+      console.warn("骑行路线搜索失败", pair, e);
+    }
+  });
+  bikeRoutesLoaded.value = true;
+}
+
+function drawBikePolyline(path, color, originName, destName) {
+  try {
+    const polyline = new BMapGL.Polyline(path, {
+      strokeColor: color || "#FF9800",
+      strokeWeight: 6,
+      strokeOpacity: 0.85,
+    });
+    map.addOverlay(polyline);
+    bikeRouteOverlays.push(polyline);
+    // 点击高亮与信息显示
+    polyline.addEventListener("click", function () {
+      info.title = `🚴 自行车高峰路线`;
+      info.desc = `${originName} → ${destName}`;
+      info.show = true;
+    });
+  } catch (e) {
+    console.warn("绘制自行车路线失败", e);
+  }
+}
+
+function clearBikeRoutes() {
+  bikeRouteOverlays.forEach((o) => {
+    try {
+      map.removeOverlay(o);
+    } catch (e) {}
+  });
+}
+// ================== 自行车高峰路线功能结束 ==================
 
 // 批量加载校园 POI 并标注在地图上
 function loadCampusPOIs() {
