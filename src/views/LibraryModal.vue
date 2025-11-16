@@ -1,189 +1,412 @@
 <template>
-    <div v-if="show" class="library-modal-overlay" @click="closeModal">
-        <div class="library-modal" @click.stop>
-            <button class="modal-close" @click="closeModal">✕</button>
+  <div v-if="show" class="library-modal-overlay" @click="closeModal">
+    <div class="library-modal" @click.stop>
+      <button class="modal-close" @click="closeModal">✕</button>
 
-            <div class="modal-header">
-                <h2>📚 西南交通大学图书馆</h2>
-                <div class="tab-container">
-                    <div class="tab-item" :class="{ active: activeTab === 'rules' }" @click="handleTabSwitch('rules')">
-                        图书馆使用规则
-                    </div>
-                    <div class="tab-item" :class="{ active: activeTab === 'data' }" @click="handleTabSwitch('data')">
-                        数据可视化大屏
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-body">
-                <!-- 使用规则 -->
-                <div v-if="activeTab === 'rules'">
-                    <!-- 1. 图书馆使用规则（完整保留原功能，补充细节） -->
-                    <div v-if="activeTab === 'rules'">
-                        <div class="info-section">
-                            <h3>基本信息</h3>
-                            <div class="info-item">
-                                <span class="label">📍 位置：</span>
-                                <span>校园中心区（近第一教学楼，从北门步行约8分钟）</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">⏰ 开放时间：</span>
-                                <span>周一至周五 8:00-22:00 | 周末 9:00-20:00（法定节假日见公告）</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">📞 联系电话：</span>
-                                <span>服务台 028-66366888 | 技术支持 028-66366999</span>
-                            </div>
-                        </div>
-
-                        <div class="info-section">
-                            <h3>借阅规则</h3>
-                            <ul class="facilities-list">
-                                <li>📚 借阅额度：本科生10册/30天，研究生20册/60天，教师30册/90天</li>
-                                <li>🔄 续借规则：可续借1次（续借期限同首借），需在到期前3天通过APP/官网操作</li>
-                                <li>⚠️ 逾期处罚：每册每天0.1元，累计超30天暂停借阅权限1周，超60天列入黑名单</li>
-                                <li>🔍 预约服务：热门图书可在线预约，到馆后保留3天取书时间（短信通知）</li>
-                                <li>📖 特殊文献：古籍、孤本、特藏图书仅限馆内阅览，不可外借（需登记身份证）</li>
-                            </ul>
-                        </div>
-
-                        <div class="info-section">
-                            <h3>自习区使用规则</h3>
-                            <ul class="facilities-list">
-                                <li>🪑 座位预约：通过“西南交大图书馆”APP预约，单次最长4小时，超时未到自动释放</li>
-                                <li>📱 占座禁止：禁止用书包、书籍等物品占座，离开超30分钟视为放弃座位</li>
-                                <li>🔇 安静要求：保持低声交流，电子设备音量≤30%，禁止外放视频/音乐</li>
-                                <li>🚫 饮食限制：仅允许携带密封水杯，禁止食用零食、外卖（咖啡厅区域除外）</li>
-                                <li>⏰ 闭馆提醒：闭馆前30分钟停止进入，前10分钟清场，需及时整理个人物品</li>
-                            </ul>
-                        </div>
-
-                        <div class="info-section">
-                            <h3>设施服务</h3>
-                            <ul class="facilities-list">
-                                <li>📖 自习室：1-3楼（1000+座位，支持线上预约，配备空调和护眼灯）</li>
-                                <li>💻 电子阅览室：2楼（200+台电脑，免费使用，需刷校园卡登录）</li>
-                                <li>☕ 学术咖啡厅：1楼（提供简餐、咖啡，支持无线充电，消费区需保持安静）</li>
-                                <li>🔌 充电区：各楼层走廊（支持Type-C/USB-A快充，部分座位配备插座）</li>
-                                <li>📚 馆藏资源：150万+册纸质书，500万+册电子书，2000+种中外文期刊</li>
-                                <li>🎥 学术报告厅：4楼（可预约举办讲座、研讨会，容量200人，需提前3天申请）</li>
-                            </ul>
-                        </div>
-
-                        <div class="info-section">
-                            <h3>交通指引</h3>
-                            <p>
-                                校内路线：从校大门步行约15分钟；乘坐校内摆渡车（1号线）至「图书馆站」下车即达；各教学楼至图书馆均有指示牌；<br>
-                                校外路线：地铁2号线「交大站」D口出，步行10分钟至校园东门，进入后直行800米；自驾可停至图书馆地下停车场（凭校园卡免费2小时）。
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. 大屏大数据可视化模块（基于ECharts） -->
-                <div v-if="activeTab === 'data'" class="data-visual-section">
-                    <!-- 数据概览卡片（顶部关键指标） -->
-                    <div class="data-cards">
-                        <div class="data-card">
-                            <div class="data-title">今日到馆人数</div>
-                            <div class="data-value">{{ todayVisitors }}</div>
-                            <div class="data-trend up">↑12% 较昨日</div>
-                        </div>
-                        <div class="data-card">
-                            <div class="data-title">当前在馆人数</div>
-                            <div class="data-value">{{ currentVisitors }}</div>
-                            <div class="data-trend down">↓5% 较上小时</div>
-                        </div>
-                        <div class="data-card">
-                            <div class="data-title">今日借阅量</div>
-                            <div class="data-value">{{ todayBorrows }}</div>
-                            <div class="data-trend up">↑8% 较昨日</div>
-                        </div>
-                        <div class="data-card">
-                            <div class="data-title">座位使用率</div>
-                            <div class="data-value">{{ seatUsage }}%</div>
-                            <div class="data-trend up">↑15% 较上周</div>
-                        </div>
-                    </div>
-
-                    <!-- 图表切换按钮 -->
-                    <div class="chart-tabs">
-                        <button class="chart-tab-btn" :class="{ active: currentChart === 'line' }"
-                            @click="switchChart('line')">
-                            📈 座位使用率
-                        </button>
-                        <button class="chart-tab-btn" :class="{ active: currentChart === 'pie' }"
-                            @click="switchChart('pie')">
-                            📊 图书分类
-                        </button>
-                        <button class="chart-tab-btn" :class="{ active: currentChart === 'bar' }"
-                            @click="switchChart('bar')">
-                            ⏰ 借阅时段
-                        </button>
-                        <button class="chart-tab-btn" :class="{ active: currentChart === 'wordCloud' }"
-                            @click="switchChart('wordCloud')">
-                            ☁️ 热门关键词
-                        </button>
-                    </div>
-
-                    <!-- 核心图表区域(使用ECharts) -->
-                    <div class="charts-container">
-                        <!-- 图表1:近7天座位使用率趋势(折线图) -->
-                        <div v-show="currentChart === 'line'" class="chart-item">
-                            <h4>📈 近7天座位使用率趋势</h4>
-                            <div ref="lineChart" class="chart-canvas"></div>
-                        </div>
-
-                        <!-- 图表2:图书分类借阅占比(饼图) -->
-                        <div v-show="currentChart === 'pie'" class="chart-item">
-                            <h4>📊 图书分类借阅占比</h4>
-                            <div ref="pieChart" class="chart-canvas"></div>
-                        </div>
-
-                        <!-- 图表3:每日借阅高峰时段(柱状图) -->
-                        <div v-show="currentChart === 'bar'" class="chart-item">
-                            <h4>⏰ 每日借阅高峰时段</h4>
-                            <div ref="barChart" class="chart-canvas"></div>
-                        </div>
-
-                        <!-- 图表4:热门搜索词云 -->
-                        <div v-show="currentChart === 'wordCloud'" class="chart-item">
-                            <h4>☁️ 热门搜索关键词</h4>
-                            <div ref="wordCloudChart" class="chart-canvas"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary" @click="closeModal">关闭</button>
-                <button class="btn btn-primary" @click="navigateToLibrary">🗺️ 导航到此</button>
-                <button class="btn btn-info" @click="openFullScreenData" v-if="activeTab === 'data'">
-                    📊 查看完整大屏
-                </button>
-            </div>
+      <div class="modal-header">
+        <h2>📚 西南交通大学图书馆</h2>
+        <div class="tab-container">
+          <div
+            class="tab-item"
+            :class="{ active: activeTab === 'rules' }"
+            @click="handleTabSwitch('rules')"
+          >
+            图书馆使用规则
+          </div>
+          <div
+            class="tab-item"
+            :class="{ active: activeTab === 'data' }"
+            @click="handleTabSwitch('data')"
+          >
+            数据可视化大屏
+          </div>
+          <div
+            class="tab-item"
+            :class="{ active: activeTab === 'booking' }"
+            @click="handleTabSwitch('booking')"
+          >
+            自习室预约
+          </div>
         </div>
+      </div>
+
+      <div class="modal-body">
+        <!-- 使用规则 -->
+        <div v-if="activeTab === 'rules'">
+          <!-- 1. 图书馆使用规则（完整保留原功能，补充细节） -->
+          <div v-if="activeTab === 'rules'">
+            <div class="info-section">
+              <h3>基本信息</h3>
+              <div class="info-item">
+                <span class="label">📍 位置：</span>
+                <span>校园中心区（近第一教学楼，从北门步行约8分钟）</span>
+              </div>
+              <div class="info-item">
+                <span class="label">⏰ 开放时间：</span>
+                <span
+                  >周一至周五 8:00-22:00 | 周末
+                  9:00-20:00（法定节假日见公告）</span
+                >
+              </div>
+              <div class="info-item">
+                <span class="label">📞 联系电话：</span>
+                <span>服务台 028-66366888 | 技术支持 028-66366999</span>
+              </div>
+            </div>
+
+            <div class="info-section">
+              <h3>借阅规则</h3>
+              <ul class="facilities-list">
+                <li>
+                  📚 借阅额度：本科生10册/30天，研究生20册/60天，教师30册/90天
+                </li>
+                <li>
+                  🔄
+                  续借规则：可续借1次（续借期限同首借），需在到期前3天通过APP/官网操作
+                </li>
+                <li>
+                  ⚠️
+                  逾期处罚：每册每天0.1元，累计超30天暂停借阅权限1周，超60天列入黑名单
+                </li>
+                <li>
+                  🔍
+                  预约服务：热门图书可在线预约，到馆后保留3天取书时间（短信通知）
+                </li>
+                <li>
+                  📖
+                  特殊文献：古籍、孤本、特藏图书仅限馆内阅览，不可外借（需登记身份证）
+                </li>
+              </ul>
+            </div>
+
+            <div class="info-section">
+              <h3>自习区使用规则</h3>
+              <ul class="facilities-list">
+                <li>
+                  🪑
+                  座位预约：通过“西南交大图书馆”APP预约，单次最长4小时，超时未到自动释放
+                </li>
+                <li>
+                  📱
+                  占座禁止：禁止用书包、书籍等物品占座，离开超30分钟视为放弃座位
+                </li>
+                <li>
+                  🔇 安静要求：保持低声交流，电子设备音量≤30%，禁止外放视频/音乐
+                </li>
+                <li>
+                  🚫
+                  饮食限制：仅允许携带密封水杯，禁止食用零食、外卖（咖啡厅区域除外）
+                </li>
+                <li>
+                  ⏰
+                  闭馆提醒：闭馆前30分钟停止进入，前10分钟清场，需及时整理个人物品
+                </li>
+              </ul>
+            </div>
+
+            <div class="info-section">
+              <h3>设施服务</h3>
+              <ul class="facilities-list">
+                <li>
+                  📖 自习室：1-3楼（1000+座位，支持线上预约，配备空调和护眼灯）
+                </li>
+                <li>
+                  💻 电子阅览室：2楼（200+台电脑，免费使用，需刷校园卡登录）
+                </li>
+                <li>
+                  ☕
+                  学术咖啡厅：1楼（提供简餐、咖啡，支持无线充电，消费区需保持安静）
+                </li>
+                <li>
+                  🔌
+                  充电区：各楼层走廊（支持Type-C/USB-A快充，部分座位配备插座）
+                </li>
+                <li>
+                  📚 馆藏资源：150万+册纸质书，500万+册电子书，2000+种中外文期刊
+                </li>
+                <li>
+                  🎥
+                  学术报告厅：4楼（可预约举办讲座、研讨会，容量200人，需提前3天申请）
+                </li>
+              </ul>
+            </div>
+
+            <div class="info-section">
+              <h3>交通指引</h3>
+              <p>
+                校内路线：从校大门步行约15分钟；乘坐校内摆渡车（1号线）至「图书馆站」下车即达；各教学楼至图书馆均有指示牌；<br />
+                校外路线：地铁2号线「交大站」D口出，步行10分钟至校园东门，进入后直行800米；自驾可停至图书馆地下停车场（凭校园卡免费2小时）。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 大屏大数据可视化模块（基于ECharts） -->
+        <div v-if="activeTab === 'data'" class="data-visual-section">
+          <!-- 数据概览卡片（顶部关键指标） -->
+          <div class="data-cards">
+            <div class="data-card">
+              <div class="data-title">今日到馆人数</div>
+              <div class="data-value">{{ todayVisitors }}</div>
+              <div class="data-trend up">↑12% 较昨日</div>
+            </div>
+            <div class="data-card">
+              <div class="data-title">当前在馆人数</div>
+              <div class="data-value">{{ currentVisitors }}</div>
+              <div class="data-trend down">↓5% 较上小时</div>
+            </div>
+            <div class="data-card">
+              <div class="data-title">今日借阅量</div>
+              <div class="data-value">{{ todayBorrows }}</div>
+              <div class="data-trend up">↑8% 较昨日</div>
+            </div>
+            <div class="data-card">
+              <div class="data-title">座位使用率</div>
+              <div class="data-value">{{ seatUsage }}%</div>
+              <div class="data-trend up">↑15% 较上周</div>
+            </div>
+          </div>
+
+          <!-- 图表切换按钮 -->
+          <div class="chart-tabs">
+            <button
+              class="chart-tab-btn"
+              :class="{ active: currentChart === 'line' }"
+              @click="switchChart('line')"
+            >
+              📈 座位使用率
+            </button>
+            <button
+              class="chart-tab-btn"
+              :class="{ active: currentChart === 'pie' }"
+              @click="switchChart('pie')"
+            >
+              📊 图书分类
+            </button>
+            <button
+              class="chart-tab-btn"
+              :class="{ active: currentChart === 'bar' }"
+              @click="switchChart('bar')"
+            >
+              ⏰ 借阅时段
+            </button>
+            <button
+              class="chart-tab-btn"
+              :class="{ active: currentChart === 'wordCloud' }"
+              @click="switchChart('wordCloud')"
+            >
+              ☁️ 热门关键词
+            </button>
+          </div>
+
+          <!-- 核心图表区域(使用ECharts) -->
+          <div class="charts-container">
+            <!-- 图表1:近7天座位使用率趋势(折线图) -->
+            <div v-show="currentChart === 'line'" class="chart-item">
+              <h4>📈 近7天座位使用率趋势</h4>
+              <div ref="lineChart" class="chart-canvas"></div>
+            </div>
+
+            <!-- 图表2:图书分类借阅占比(饼图) -->
+            <div v-show="currentChart === 'pie'" class="chart-item">
+              <h4>📊 图书分类借阅占比</h4>
+              <div ref="pieChart" class="chart-canvas"></div>
+            </div>
+
+            <!-- 图表3:每日借阅高峰时段(柱状图) -->
+            <div v-show="currentChart === 'bar'" class="chart-item">
+              <h4>⏰ 每日借阅高峰时段</h4>
+              <div ref="barChart" class="chart-canvas"></div>
+            </div>
+
+            <!-- 图表4:热门搜索词云 -->
+            <div v-show="currentChart === 'wordCloud'" class="chart-item">
+              <h4>☁️ 热门搜索关键词</h4>
+              <div ref="wordCloudChart" class="chart-canvas"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 自习室预约模块 -->
+        <div v-if="activeTab === 'booking'" class="booking-section">
+          <!-- 预订表单 -->
+          <div class="booking-card">
+            <h3>预约信息</h3>
+            <div class="booking-form">
+              <div class="form-row">
+                <label>日期</label>
+                <input type="date" v-model="form.date" />
+              </div>
+              <div class="form-row two">
+                <div>
+                  <label>开始时间</label>
+                  <input type="time" v-model="form.start" />
+                </div>
+                <div>
+                  <label>时长</label>
+                  <select v-model.number="form.duration">
+                    <option :value="1">1小时</option>
+                    <option :value="2">2小时</option>
+                    <option :value="3">3小时</option>
+                    <option :value="4">4小时（上限）</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row two">
+                <div>
+                  <label>人数</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    v-model.number="form.attendees"
+                  />
+                </div>
+                <div>
+                  <label>关键字（可选）</label>
+                  <input
+                    type="text"
+                    placeholder="按房间名称筛选，如 A101"
+                    v-model="roomKeyword"
+                  />
+                </div>
+              </div>
+              <div class="hint">
+                可预约时间段：每日 08:00 - 22:00；单次最长 4
+                小时；请确保人数不超过房间容量。
+              </div>
+            </div>
+          </div>
+
+          <!-- 房间选择 -->
+          <div class="booking-card">
+            <h3>选择自习室</h3>
+            <div class="room-grid">
+              <div
+                v-for="room in filteredRooms"
+                :key="room.id"
+                class="room-item"
+                :class="{
+                  selected: form.roomId === room.id,
+                  unavailable: !isRoomAvailable(
+                    room,
+                    form.date,
+                    form.start,
+                    form.duration
+                  ),
+                }"
+                @click="selectRoom(room)"
+                :title="roomTooltip(room)"
+              >
+                <div class="room-name">{{ room.name }}</div>
+                <div class="room-meta">容纳 {{ room.capacity }} 人</div>
+                <div
+                  class="room-status"
+                  :class="{
+                    ok: isRoomAvailable(
+                      room,
+                      form.date,
+                      form.start,
+                      form.duration
+                    ),
+                  }"
+                >
+                  {{
+                    isRoomAvailable(room, form.date, form.start, form.duration)
+                      ? "可预约"
+                      : "时间冲突"
+                  }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 提交预约 -->
+          <div class="booking-actions">
+            <button
+              class="btn btn-primary"
+              :disabled="!canSubmit"
+              @click="submitBooking"
+            >
+              ✅ 提交预约
+            </button>
+            <div class="error-text" v-if="errorText">{{ errorText }}</div>
+          </div>
+
+          <!-- 预约记录 -->
+          <div class="booking-card">
+            <h3>我的预约</h3>
+            <div v-if="upcomingReservations.length === 0" class="empty">
+              暂无预约记录
+            </div>
+            <div v-else class="reservation-list">
+              <div
+                class="reservation-item"
+                v-for="r in upcomingReservations"
+                :key="r.id"
+              >
+                <div class="reservation-main">
+                  <div class="reservation-title">
+                    {{ r.roomName }} · {{ r.attendees }} 人
+                  </div>
+                  <div class="reservation-time">
+                    {{ r.date }} {{ r.start }} - {{ r.end }}
+                  </div>
+                </div>
+                <button
+                  class="btn btn-secondary btn-cancel"
+                  @click="cancelReservation(r.id)"
+                >
+                  取消
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" @click="closeModal">关闭</button>
+        <button class="btn btn-primary" @click="navigateToLibrary">
+          🗺️ 导航到此
+        </button>
+        <button
+          class="btn btn-info"
+          @click="openFullScreenData"
+          v-if="activeTab === 'data'"
+        >
+          📊 查看完整大屏
+        </button>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick, getCurrentInstance } from 'vue';
+import {
+  ref,
+  onMounted,
+  watch,
+  nextTick,
+  getCurrentInstance,
+  computed,
+} from "vue";
 
 // 1. 接收父组件参数
 const props = defineProps({
-    show: {
-        type: Boolean,
-        default: false,
-        required: true
-    }
+  show: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
 });
 
 // 2. 定义触发事件
-const emit = defineEmits(['close', 'navigate', 'open-full-screen-data']);
+const emit = defineEmits(["close", "navigate", "open-full-screen-data"]);
 
 // 3. 内部状态管理
-const activeTab = ref('rules');
-const currentChart = ref('line'); // 当前显示的图表
+const activeTab = ref("rules");
+const currentChart = ref("line"); // 当前显示的图表
 
 // 模拟图书馆核心数据
 const todayVisitors = ref(1286);
@@ -204,309 +427,364 @@ let wordCloudChartInstance = null;
 // 5. ECharts 配置
 // 折线图配置 - 座位使用率趋势
 const lineChartOption = ref({
-    backgroundColor: 'transparent',
-    grid: {
-        top: '15%',
-        left: '10%',
-        right: '10%',
-        bottom: '15%'
+  backgroundColor: "transparent",
+  grid: {
+    top: "15%",
+    left: "10%",
+    right: "10%",
+    bottom: "15%",
+  },
+  xAxis: {
+    type: "category",
+    data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+    axisLine: {
+      lineStyle: { color: "#00d4ff" },
     },
-    xAxis: {
-        type: 'category',
-        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-        axisLine: {
-            lineStyle: { color: '#00d4ff' }
-        },
-        axisLabel: {
-            color: '#00d4ff'
-        }
+    axisLabel: {
+      color: "#00d4ff",
     },
-    yAxis: {
-        type: 'value',
-        max: 100,
-        axisLine: {
-            lineStyle: { color: '#00d4ff' }
-        },
-        axisLabel: {
-            color: '#00d4ff',
-            formatter: '{value}%'
-        },
-        splitLine: {
-            lineStyle: { color: 'rgba(0, 212, 255, 0.2)' }
-        }
+  },
+  yAxis: {
+    type: "value",
+    max: 100,
+    axisLine: {
+      lineStyle: { color: "#00d4ff" },
     },
-    series: [{
-        data: [65, 72, 88, 76, 92, 45, 38],
-        type: 'line',
-        smooth: true,
-        symbol: 'circle',
-        symbolSize: 8,
-        lineStyle: {
-            width: 3,
-            color: {
-                type: 'linear',
-                x: 0, y: 0, x2: 1, y2: 0,
-                colorStops: [{
-                    offset: 0, color: '#2575fc'
-                }, {
-                    offset: 1, color: '#00d4ff'
-                }]
-            }
+    axisLabel: {
+      color: "#00d4ff",
+      formatter: "{value}%",
+    },
+    splitLine: {
+      lineStyle: { color: "rgba(0, 212, 255, 0.2)" },
+    },
+  },
+  series: [
+    {
+      data: [65, 72, 88, 76, 92, 45, 38],
+      type: "line",
+      smooth: true,
+      symbol: "circle",
+      symbolSize: 8,
+      lineStyle: {
+        width: 3,
+        color: {
+          type: "linear",
+          x: 0,
+          y: 0,
+          x2: 1,
+          y2: 0,
+          colorStops: [
+            {
+              offset: 0,
+              color: "#2575fc",
+            },
+            {
+              offset: 1,
+              color: "#00d4ff",
+            },
+          ],
         },
-        itemStyle: {
-            color: '#00d4ff',
-            shadowColor: '#00d4ff',
-            shadowBlur: 10
+      },
+      itemStyle: {
+        color: "#00d4ff",
+        shadowColor: "#00d4ff",
+        shadowBlur: 10,
+      },
+      areaStyle: {
+        color: {
+          type: "linear",
+          x: 0,
+          y: 0,
+          x2: 0,
+          y2: 1,
+          colorStops: [
+            {
+              offset: 0,
+              color: "rgba(37, 117, 252, 0.3)",
+            },
+            {
+              offset: 1,
+              color: "rgba(0, 212, 255, 0.1)",
+            },
+          ],
         },
-        areaStyle: {
-            color: {
-                type: 'linear',
-                x: 0, y: 0, x2: 0, y2: 1,
-                colorStops: [{
-                    offset: 0, color: 'rgba(37, 117, 252, 0.3)'
-                }, {
-                    offset: 1, color: 'rgba(0, 212, 255, 0.1)'
-                }]
-            }
-        }
-    }]
+      },
+    },
+  ],
 });
 
 // 饼图配置 - 图书分类占比
 const pieChartOption = ref({
-    backgroundColor: 'transparent',
-    legend: {
-        orient: 'vertical',
-        left: '10%',
-        top: '20%',
-        textStyle: {
-            color: '#00d4ff'
-        }
+  backgroundColor: "transparent",
+  legend: {
+    orient: "vertical",
+    left: "10%",
+    top: "20%",
+    textStyle: {
+      color: "#00d4ff",
     },
-    series: [{
-        type: 'pie',
-        radius: ['40%', '70%'],
-        center: ['60%', '50%'],
-        data: [
-            { name: '工科类', value: 42 },
-            { name: '文学类', value: 23 },
-            { name: '理学类', value: 15 },
-            { name: '社科类', value: 12 },
-            { name: '其他类', value: 8 }
-        ],
-        emphasis: {
-            itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-            }
-        },
+  },
+  series: [
+    {
+      type: "pie",
+      radius: ["40%", "70%"],
+      center: ["60%", "50%"],
+      data: [
+        { name: "工科类", value: 42 },
+        { name: "文学类", value: 23 },
+        { name: "理学类", value: 15 },
+        { name: "社科类", value: 12 },
+        { name: "其他类", value: 8 },
+      ],
+      emphasis: {
         itemStyle: {
-            borderRadius: 8,
-            borderColor: '#fff',
-            borderWidth: 2
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: "rgba(0, 0, 0, 0.5)",
         },
-        label: {
-            color: '#00d4ff',
-            formatter: '{b}: {c}%'
-        },
-        color: ['#2575fc', '#6a11cb', '#00b42a', '#f53f3f', '#ff7d00']
-    }]
+      },
+      itemStyle: {
+        borderRadius: 8,
+        borderColor: "#fff",
+        borderWidth: 2,
+      },
+      label: {
+        color: "#00d4ff",
+        formatter: "{b}: {c}%",
+      },
+      color: ["#2575fc", "#6a11cb", "#00b42a", "#f53f3f", "#ff7d00"],
+    },
+  ],
 });
 
 // 柱状图配置 - 借阅高峰时段
 const barChartOption = ref({
-    backgroundColor: 'transparent',
-    grid: {
-        top: '15%',
-        left: '15%',
-        right: '10%',
-        bottom: '20%'
+  backgroundColor: "transparent",
+  grid: {
+    top: "15%",
+    left: "15%",
+    right: "10%",
+    bottom: "20%",
+  },
+  xAxis: {
+    type: "category",
+    data: [
+      "8-10点",
+      "10-12点",
+      "12-14点",
+      "14-16点",
+      "16-18点",
+      "18-20点",
+      "20-22点",
+    ],
+    axisLine: {
+      lineStyle: { color: "#00d4ff" },
     },
-    xAxis: {
-        type: 'category',
-        data: ['8-10点', '10-12点', '12-14点', '14-16点', '16-18点', '18-20点', '20-22点'],
-        axisLine: {
-            lineStyle: { color: '#00d4ff' }
-        },
-        axisLabel: {
-            color: '#00d4ff',
-            rotate: 45
-        }
+    axisLabel: {
+      color: "#00d4ff",
+      rotate: 45,
     },
-    yAxis: {
-        type: 'value',
-        axisLine: {
-            lineStyle: { color: '#00d4ff' }
-        },
-        axisLabel: {
-            color: '#00d4ff'
-        },
-        splitLine: {
-            lineStyle: { color: 'rgba(0, 212, 255, 0.2)' }
-        }
+  },
+  yAxis: {
+    type: "value",
+    axisLine: {
+      lineStyle: { color: "#00d4ff" },
     },
-    series: [{
-        data: [45, 82, 38, 95, 120, 78, 62],
-        type: 'bar',
-        barWidth: '60%',
-        itemStyle: {
-            color: {
-                type: 'linear',
-                x: 0, y: 0, x2: 0, y2: 1,
-                colorStops: [{
-                    offset: 0, color: '#00d4ff'
-                }, {
-                    offset: 1, color: '#2575fc'
-                }]
+    axisLabel: {
+      color: "#00d4ff",
+    },
+    splitLine: {
+      lineStyle: { color: "rgba(0, 212, 255, 0.2)" },
+    },
+  },
+  series: [
+    {
+      data: [45, 82, 38, 95, 120, 78, 62],
+      type: "bar",
+      barWidth: "60%",
+      itemStyle: {
+        color: {
+          type: "linear",
+          x: 0,
+          y: 0,
+          x2: 0,
+          y2: 1,
+          colorStops: [
+            {
+              offset: 0,
+              color: "#00d4ff",
             },
-            borderRadius: [4, 4, 0, 0],
-            shadowColor: '#2575fc',
-            shadowBlur: 10,
-            shadowOffsetY: 5
-        }
-    }]
+            {
+              offset: 1,
+              color: "#2575fc",
+            },
+          ],
+        },
+        borderRadius: [4, 4, 0, 0],
+        shadowColor: "#2575fc",
+        shadowBlur: 10,
+        shadowOffsetY: 5,
+      },
+    },
+  ],
 });
 
 // 词云图配置 - 热门搜索关键词
 const wordCloudOption = ref({
-    backgroundColor: 'transparent',
-    series: [{
-        type: 'wordCloud',
-        shape: 'circle',
-        left: 'center',
-        top: 'center',
-        width: '100%',
-        height: '100%',
-        right: null,
-        bottom: null,
-        sizeRange: [14, 60],
-        rotationRange: [-45, 45],
-        rotationStep: 45,
-        gridSize: 8,
-        drawOutOfBound: false,
-        layoutAnimation: true,
+  backgroundColor: "transparent",
+  series: [
+    {
+      type: "wordCloud",
+      shape: "circle",
+      left: "center",
+      top: "center",
+      width: "100%",
+      height: "100%",
+      right: null,
+      bottom: null,
+      sizeRange: [14, 60],
+      rotationRange: [-45, 45],
+      rotationStep: 45,
+      gridSize: 8,
+      drawOutOfBound: false,
+      layoutAnimation: true,
+      textStyle: {
+        fontFamily: "Microsoft YaHei, sans-serif",
+        fontWeight: "bold",
+        color: function () {
+          const colors = [
+            "#2575fc",
+            "#00d4ff",
+            "#6a11cb",
+            "#00b42a",
+            "#f53f3f",
+            "#ff7d00",
+            "#00d4ff",
+            "#9254de",
+          ];
+          return colors[Math.floor(Math.random() * colors.length)];
+        },
+      },
+      emphasis: {
+        focus: "self",
         textStyle: {
-            fontFamily: 'Microsoft YaHei, sans-serif',
-            fontWeight: 'bold',
-            color: function () {
-                const colors = [
-                    '#2575fc', '#00d4ff', '#6a11cb', '#00b42a',
-                    '#f53f3f', '#ff7d00', '#00d4ff', '#9254de'
-                ];
-                return colors[Math.floor(Math.random() * colors.length)];
-            }
+          textShadowBlur: 10,
+          textShadowColor: "#00d4ff",
         },
-        emphasis: {
-            focus: 'self',
-            textStyle: {
-                textShadowBlur: 10,
-                textShadowColor: '#00d4ff'
-            }
-        },
-        data: [
-            { name: '数据结构', value: 1500 },
-            { name: '算法导论', value: 1200 },
-            { name: '机器学习', value: 1100 },
-            { name: '操作系统', value: 1000 },
-            { name: '计算机网络', value: 950 },
-            { name: '深度学习', value: 900 },
-            { name: '人工智能', value: 850 },
-            { name: 'Python编程', value: 800 },
-            { name: '数据库原理', value: 750 },
-            { name: '软件工程', value: 700 },
-            { name: 'Java编程', value: 650 },
-            { name: '编译原理', value: 600 },
-            { name: '高等数学', value: 550 },
-            { name: '线性代数', value: 500 },
-            { name: '概率论', value: 480 },
-            { name: '离散数学', value: 450 },
-            { name: '计算机组成', value: 420 },
-            { name: 'Web开发', value: 400 },
-            { name: '大数据', value: 380 },
-            { name: '云计算', value: 350 },
-            { name: '区块链', value: 320 },
-            { name: '物联网', value: 300 },
-            { name: '信息安全', value: 280 },
-            { name: 'C++程序设计', value: 260 },
-            { name: '数字图像处理', value: 240 }
-        ]
-    }]
+      },
+      data: [
+        { name: "数据结构", value: 1500 },
+        { name: "算法导论", value: 1200 },
+        { name: "机器学习", value: 1100 },
+        { name: "操作系统", value: 1000 },
+        { name: "计算机网络", value: 950 },
+        { name: "深度学习", value: 900 },
+        { name: "人工智能", value: 850 },
+        { name: "Python编程", value: 800 },
+        { name: "数据库原理", value: 750 },
+        { name: "软件工程", value: 700 },
+        { name: "Java编程", value: 650 },
+        { name: "编译原理", value: 600 },
+        { name: "高等数学", value: 550 },
+        { name: "线性代数", value: 500 },
+        { name: "概率论", value: 480 },
+        { name: "离散数学", value: 450 },
+        { name: "计算机组成", value: 420 },
+        { name: "Web开发", value: 400 },
+        { name: "大数据", value: 380 },
+        { name: "云计算", value: 350 },
+        { name: "区块链", value: 320 },
+        { name: "物联网", value: 300 },
+        { name: "信息安全", value: 280 },
+        { name: "C++程序设计", value: 260 },
+        { name: "数字图像处理", value: 240 },
+      ],
+    },
+  ],
 });
 
 // 6. 初始化图表函数
 const { proxy } = getCurrentInstance();
 
 const initCharts = () => {
-    if (!lineChart.value || !pieChart.value || !barChart.value || !wordCloudChart.value) return;
+  if (
+    !lineChart.value ||
+    !pieChart.value ||
+    !barChart.value ||
+    !wordCloudChart.value
+  )
+    return;
 
-    // 初始化折线图
-    lineChartInstance = proxy.$echarts.init(lineChart.value);
-    lineChartInstance.setOption(lineChartOption.value);
+  // 初始化折线图
+  lineChartInstance = proxy.$echarts.init(lineChart.value);
+  lineChartInstance.setOption(lineChartOption.value);
 
-    // 初始化饼图
-    pieChartInstance = proxy.$echarts.init(pieChart.value);
-    pieChartInstance.setOption(pieChartOption.value);
+  // 初始化饼图
+  pieChartInstance = proxy.$echarts.init(pieChart.value);
+  pieChartInstance.setOption(pieChartOption.value);
 
-    // 初始化柱状图
-    barChartInstance = proxy.$echarts.init(barChart.value);
-    barChartInstance.setOption(barChartOption.value);
+  // 初始化柱状图
+  barChartInstance = proxy.$echarts.init(barChart.value);
+  barChartInstance.setOption(barChartOption.value);
 
-    // 初始化词云图
-    wordCloudChartInstance = proxy.$echarts.init(wordCloudChart.value);
-    wordCloudChartInstance.setOption(wordCloudOption.value);
+  // 初始化词云图
+  wordCloudChartInstance = proxy.$echarts.init(wordCloudChart.value);
+  wordCloudChartInstance.setOption(wordCloudOption.value);
 };
 
 // 7. Tab切换处理函数
 const handleTabSwitch = (tab) => {
-    activeTab.value = tab;
-    if (tab === 'data') {
-        currentChart.value = 'line'; // 切到数据tab时默认显示折线图
-        nextTick(() => {
-            initCharts();
-        });
-    }
+  activeTab.value = tab;
+  if (tab === "data") {
+    currentChart.value = "line"; // 切到数据tab时默认显示折线图
+    nextTick(() => {
+      initCharts();
+    });
+  }
 };
 
 // 图表切换函数
 const switchChart = (chartType) => {
-    currentChart.value = chartType;
-    // 切换后重新调整图表大小
-    nextTick(() => {
-        if (chartType === 'line' && lineChartInstance) {
-            lineChartInstance.resize();
-        } else if (chartType === 'pie' && pieChartInstance) {
-            pieChartInstance.resize();
-        } else if (chartType === 'bar' && barChartInstance) {
-            barChartInstance.resize();
-        } else if (chartType === 'wordCloud' && wordCloudChartInstance) {
-            wordCloudChartInstance.resize();
-        }
-    });
+  currentChart.value = chartType;
+  // 切换后重新调整图表大小
+  nextTick(() => {
+    if (chartType === "line" && lineChartInstance) {
+      lineChartInstance.resize();
+    } else if (chartType === "pie" && pieChartInstance) {
+      pieChartInstance.resize();
+    } else if (chartType === "bar" && barChartInstance) {
+      barChartInstance.resize();
+    } else if (chartType === "wordCloud" && wordCloudChartInstance) {
+      wordCloudChartInstance.resize();
+    }
+  });
 };
 
 // 8. 监听弹窗显示状态
-watch(() => props.show, (newVal) => {
-    if (newVal && activeTab.value === 'data') {
-        nextTick(() => {
-            initCharts();
-        });
+watch(
+  () => props.show,
+  (newVal) => {
+    if (newVal && activeTab.value === "data") {
+      nextTick(() => {
+        initCharts();
+      });
     }
-});
+  }
+);
 
 // 9. 事件处理函数
 const closeModal = () => {
-    emit('close');
+  emit("close");
 };
 
 const navigateToLibrary = () => {
-    emit('navigate');
+  emit("navigate");
 };
 
 const openFullScreenData = () => {
-    // 创建全屏数据可视化页面
-    const fullScreenWindow = window.open('', '_blank', 'width=1920,height=1080');
-    const fullScreenContent = `
+  // 创建全屏数据可视化页面
+  const fullScreenWindow = window.open("", "_blank", "width=1920,height=1080");
+  const fullScreenContent = `
     <!DOCTYPE html>
     <html lang="zh-CN">
     <head>
@@ -680,7 +958,9 @@ body {
                 
                 // 词云图
                 const wordCloudChart = echarts.init(document.getElementById('wordCloudChart'));
-                wordCloudChart.setOption(${JSON.stringify(wordCloudOption.value)});
+                wordCloudChart.setOption(${JSON.stringify(
+                  wordCloudOption.value
+                )});
                 
                 // 自适应窗口大小
                 window.addEventListener('resize', function() {
@@ -695,442 +975,831 @@ body {
 
 </html>
 `;
-    fullScreenWindow.document.write(fullScreenContent);
-    fullScreenWindow.document.close();
+  fullScreenWindow.document.write(fullScreenContent);
+  fullScreenWindow.document.close();
 };
+
+// ========== 自习室预约：状态与逻辑 ==========
+const LS_KEY = "swjtu_library_studyroom_reservations";
+
+// 房间配置（示例，可扩展）
+const rooms = ref([
+  { id: "A101", name: "A101", capacity: 4 },
+  { id: "A102", name: "A102", capacity: 6 },
+  { id: "A103", name: "A103", capacity: 2 },
+  { id: "A201", name: "A201", capacity: 6 },
+  { id: "A202", name: "A202", capacity: 8 },
+  { id: "A203", name: "A203", capacity: 10 },
+  { id: "B101", name: "B101", capacity: 4 },
+  { id: "B102", name: "B102", capacity: 6 },
+  { id: "B201", name: "B201", capacity: 8 },
+]);
+
+// 预约表单
+const todayStr = () => {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+};
+
+const form = ref({
+  date: todayStr(),
+  start: "14:00",
+  duration: 2,
+  attendees: 2,
+  roomId: "",
+});
+
+const roomKeyword = ref("");
+const errorText = ref("");
+
+const filteredRooms = computed(() => {
+  const kw = roomKeyword.value.trim().toLowerCase();
+  return rooms.value
+    .filter((r) => r.capacity >= (form.value.attendees || 1))
+    .filter((r) => !kw || r.name.toLowerCase().includes(kw));
+});
+
+function roomTooltip(room) {
+  return `容量：${room.capacity} 人`;
+}
+
+function selectRoom(room) {
+  if (
+    !isRoomAvailable(
+      room,
+      form.value.date,
+      form.value.start,
+      form.value.duration
+    )
+  )
+    return;
+  form.value.roomId = room.id;
+}
+
+function parseTimeToMinutes(t) {
+  // t: 'HH:MM'
+  const [h, m] = (t || "00:00").split(":").map(Number);
+  return h * 60 + m;
+}
+
+function minutesToTime(mins) {
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
+function calcEnd(start, durationHours) {
+  const endMin = parseTimeToMinutes(start) + durationHours * 60;
+  return minutesToTime(endMin);
+}
+
+const endTime = computed(() => calcEnd(form.value.start, form.value.duration));
+
+// 本地预约数据
+const reservations = ref([]);
+
+function loadReservations() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    reservations.value = raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    reservations.value = [];
+  }
+}
+
+function saveReservations() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(reservations.value));
+  } catch (e) {
+    /* ignore */
+  }
+}
+
+onMounted(() => {
+  loadReservations();
+});
+
+// 可预约时间范围
+const OPEN_TIME_MIN = 8 * 60; // 08:00
+const CLOSE_TIME_MIN = 22 * 60; // 22:00
+
+function isValidTimeRange(dateStr, start, duration) {
+  const s = parseTimeToMinutes(start);
+  const e = s + duration * 60;
+  if (s < OPEN_TIME_MIN || e > CLOSE_TIME_MIN) return false;
+  // 如果是今天，开始时间不能早于当前时间的后5分钟
+  try {
+    const today = todayStr();
+    if (dateStr === today) {
+      const now = new Date();
+      const nowMin = now.getHours() * 60 + now.getMinutes();
+      if (s < nowMin + 5) return false;
+    }
+  } catch (e) {}
+  return true;
+}
+
+function overlap(aStart, aEnd, bStart, bEnd) {
+  return aStart < bEnd && bStart < aEnd;
+}
+
+function isRoomAvailable(room, dateStr, start, duration) {
+  const s = parseTimeToMinutes(start);
+  const e = s + duration * 60;
+  // 时间合法性
+  if (!isValidTimeRange(dateStr, start, duration)) return false;
+  // 与已有预约冲突判断
+  return !reservations.value.some(
+    (r) =>
+      r.roomId === room.id &&
+      r.date === dateStr &&
+      overlap(s, e, parseTimeToMinutes(r.start), parseTimeToMinutes(r.end))
+  );
+}
+
+const canSubmit = computed(() => {
+  errorText.value = "";
+  const r = rooms.value.find((x) => x.id === form.value.roomId);
+  if (!r) {
+    errorText.value = "请选择一个可预约的自习室";
+    return false;
+  }
+  if (form.value.attendees < 1) {
+    errorText.value = "人数需至少为 1";
+    return false;
+  }
+  if (form.value.attendees > r.capacity) {
+    errorText.value = "人数超过房间容量";
+    return false;
+  }
+  if (
+    !isValidTimeRange(form.value.date, form.value.start, form.value.duration)
+  ) {
+    errorText.value = "时间不合法或不在开放时段";
+    return false;
+  }
+  if (
+    !isRoomAvailable(r, form.value.date, form.value.start, form.value.duration)
+  ) {
+    errorText.value = "所选时间与已有预约冲突";
+    return false;
+  }
+  return true;
+});
+
+function submitBooking() {
+  if (!canSubmit.value) return;
+  const r = rooms.value.find((x) => x.id === form.value.roomId);
+  const data = {
+    id: `${Date.now()}_${Math.random().toString(16).slice(2, 8)}`,
+    roomId: r.id,
+    roomName: r.name,
+    capacity: r.capacity,
+    attendees: form.value.attendees,
+    date: form.value.date,
+    start: form.value.start,
+    end: endTime.value,
+  };
+  reservations.value.push(data);
+  saveReservations();
+  alert("预约成功！");
+}
+
+const upcomingReservations = computed(() => {
+  // 只显示今天及以后的预约，按时间排序
+  const now = new Date();
+  const today = todayStr();
+  return [...reservations.value]
+    .filter(
+      (r) =>
+        r.date > today ||
+        (r.date === today &&
+          parseTimeToMinutes(r.end) >= now.getHours() * 60 + now.getMinutes())
+    )
+    .sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
+});
+
+function cancelReservation(id) {
+  reservations.value = reservations.value.filter((r) => r.id !== id);
+  saveReservations();
+}
 </script>
 
 <style scoped>
 /* 原有样式保留，新增Tab切换、数据可视化相关样式 */
 .library-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 11000;
-    backdrop-filter: blur(2px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 11000;
+  backdrop-filter: blur(2px);
 }
 
 .library-modal {
-    background: white;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 900px;
-    /* 加宽弹窗以适配数据可视化 */
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    position: relative;
-    animation: slideIn 0.3s ease-out;
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 900px;
+  /* 加宽弹窗以适配数据可视化 */
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: slideIn 0.3s ease-out;
 }
 
 @keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #999;
-    padding: 0;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    transition: color 0.18s;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: color 0.18s;
 }
 
 .modal-close:hover {
-    color: #333;
+  color: #333;
 }
 
 .modal-header {
-    padding: 24px 24px 16px;
-    border-bottom: 2px solid #f0f0f0;
+  padding: 24px 24px 16px;
+  border-bottom: 2px solid #f0f0f0;
 }
 
 .modal-header h2 {
-    margin: 0 0 16px 0;
-    font-size: 22px;
-    font-weight: 700;
-    color: #333;
+  margin: 0 0 16px 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #333;
 }
 
 /* 新增：Tab切换样式 */
 .tab-container {
-    display: flex;
-    border-radius: 8px;
-    overflow: hidden;
-    background: #f5f5f5;
-    margin-top: 8px;
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f5f5f5;
+  margin-top: 8px;
 }
 
 .tab-item {
-    flex: 1;
-    text-align: center;
-    padding: 10px 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #666;
-    cursor: pointer;
-    transition: all 0.2s;
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .tab-item.active {
-    background: #2575fc;
-    color: white;
+  background: #2575fc;
+  color: white;
 }
 
 .tab-item:hover:not(.active) {
-    background: #e9e9e9;
+  background: #e9e9e9;
 }
 
 .modal-body {
-    padding: 24px;
+  padding: 24px;
 }
 
 .info-section {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .info-section:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .info-section h3 {
-    margin: 0 0 12px 0;
-    font-size: 14px;
-    font-weight: 700;
-    color: #2575fc;
-    border-bottom: 2px solid #2575fc;
-    padding-bottom: 6px;
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2575fc;
+  border-bottom: 2px solid #2575fc;
+  padding-bottom: 6px;
 }
 
 .info-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    font-size: 14px;
-    color: #333;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #333;
 }
 
 .label {
-    font-weight: 600;
-    margin-right: 8px;
-    color: #555;
+  font-weight: 600;
+  margin-right: 8px;
+  color: #555;
 }
 
 .facilities-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .facilities-list li {
-    padding: 8px 0;
-    font-size: 14px;
-    color: #555;
-    border-bottom: 1px solid #f0f0f0;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #555;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .facilities-list li:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .info-section p {
-    margin: 0;
-    font-size: 13px;
-    line-height: 1.6;
-    color: #666;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #666;
 }
 
 .modal-footer {
-    display: flex;
-    gap: 12px;
-    padding: 16px 24px;
-    border-top: 1px solid #f0f0f0;
-    background: #f9f9f9;
-    border-radius: 0 0 16px 16px;
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #f0f0f0;
+  background: #f9f9f9;
+  border-radius: 0 0 16px 16px;
 }
 
 .btn {
-    flex: 1;
-    padding: 12px 16px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.18s;
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
 }
 
 .btn-secondary {
-    background: #e0e0e0;
-    color: #333;
+  background: #e0e0e0;
+  color: #333;
 }
 
 .btn-secondary:hover {
-    background: #d0d0d0;
+  background: #d0d0d0;
 }
 
 .btn-primary {
-    background: linear-gradient(90deg, #2575fc, #0d47a1);
-    color: white;
+  background: linear-gradient(90deg, #2575fc, #0d47a1);
+  color: white;
 }
 
 .btn-primary:hover {
-    box-shadow: 0 4px 12px rgba(37, 117, 252, 0.3);
+  box-shadow: 0 4px 12px rgba(37, 117, 252, 0.3);
 }
 
 /* 新增：信息按钮（查看完整大屏） */
 .btn-info {
-    background: linear-gradient(90deg, #6a11cb, #2575fc);
-    color: white;
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: white;
 }
 
 .btn-info:hover {
-    box-shadow: 0 4px 12px rgba(106, 17, 203, 0.3);
+  box-shadow: 0 4px 12px rgba(106, 17, 203, 0.3);
+}
+
+/* 覆盖预约列表中的“取消”按钮，让其保持自适应宽度 */
+.btn-cancel {
+  flex: 0 0 auto; /* 覆盖 .btn 的 flex: 1 设置 */
+  padding: 8px 12px;
+  white-space: nowrap;
 }
 
 /* 滚动条美化 */
 .library-modal::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 
 .library-modal::-webkit-scrollbar-track {
-    background: #f0f0f0;
-    border-radius: 3px;
+  background: #f0f0f0;
+  border-radius: 3px;
 }
 
 .library-modal::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 3px;
+  background: #ccc;
+  border-radius: 3px;
 }
 
 .library-modal::-webkit-scrollbar-thumb:hover {
-    background: #999;
+  background: #999;
 }
 
 /* 新增：数据可视化区域样式 */
 .data-visual-section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-    border-radius: 12px;
-    padding: 20px;
-    margin: -24px;
-    margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin: -24px;
+  margin-top: 0;
 }
 
 /* 数据卡片样式 */
 .data-cards {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .data-card {
-    flex: 1;
-    min-width: 160px;
-    background: linear-gradient(135deg, rgba(37, 117, 252, 0.1), rgba(106, 17, 203, 0.1));
-    border: 1px solid rgba(37, 117, 252, 0.3);
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 4px 15px rgba(37, 117, 252, 0.2);
-    transition: transform 0.2s, box-shadow 0.2s;
-    backdrop-filter: blur(10px);
+  flex: 1;
+  min-width: 160px;
+  background: linear-gradient(
+    135deg,
+    rgba(37, 117, 252, 0.1),
+    rgba(106, 17, 203, 0.1)
+  );
+  border: 1px solid rgba(37, 117, 252, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 15px rgba(37, 117, 252, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+  backdrop-filter: blur(10px);
 }
 
 .data-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(37, 117, 252, 0.4);
-    border-color: rgba(37, 117, 252, 0.6);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(37, 117, 252, 0.4);
+  border-color: rgba(37, 117, 252, 0.6);
 }
 
 .data-title {
-    font-size: 14px;
-    color: #00d4ff;
-    margin-bottom: 8px;
-    text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
+  font-size: 14px;
+  color: #00d4ff;
+  margin-bottom: 8px;
+  text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
 }
 
 .data-value {
-    font-size: 28px;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 4px;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 4px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .data-trend {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 .data-trend.up {
-    color: #00ff88;
-    text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
+  color: #00ff88;
+  text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
 }
 
 .data-trend.down {
-    color: #ff4757;
-    text-shadow: 0 0 5px rgba(255, 71, 87, 0.5);
+  color: #ff4757;
+  text-shadow: 0 0 5px rgba(255, 71, 87, 0.5);
 }
 
 /* 图表切换按钮 */
 .chart-tabs {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .chart-tab-btn {
-    flex: 1;
-    min-width: 120px;
-    padding: 12px 16px;
-    background: linear-gradient(135deg, rgba(37, 117, 252, 0.15), rgba(106, 17, 203, 0.15));
-    border: 1px solid rgba(37, 117, 252, 0.3);
-    border-radius: 10px;
-    color: #00d4ff;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-shadow: 0 0 5px rgba(0, 212, 255, 0.3);
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(37, 117, 252, 0.15),
+    rgba(106, 17, 203, 0.15)
+  );
+  border: 1px solid rgba(37, 117, 252, 0.3);
+  border-radius: 10px;
+  color: #00d4ff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-shadow: 0 0 5px rgba(0, 212, 255, 0.3);
 }
 
 .chart-tab-btn:hover {
-    background: linear-gradient(135deg, rgba(37, 117, 252, 0.25), rgba(106, 17, 203, 0.25));
-    border-color: rgba(37, 117, 252, 0.6);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(37, 117, 252, 0.3);
+  background: linear-gradient(
+    135deg,
+    rgba(37, 117, 252, 0.25),
+    rgba(106, 17, 203, 0.25)
+  );
+  border-color: rgba(37, 117, 252, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 117, 252, 0.3);
 }
 
 .chart-tab-btn.active {
-    background: linear-gradient(135deg, #2575fc, #6a11cb);
-    border-color: #2575fc;
-    color: white;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    box-shadow: 0 6px 20px rgba(37, 117, 252, 0.5);
+  background: linear-gradient(135deg, #2575fc, #6a11cb);
+  border-color: #2575fc;
+  color: white;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 6px 20px rgba(37, 117, 252, 0.5);
 }
 
 .chart-tab-btn.active:hover {
-    transform: translateY(-3px);
+  transform: translateY(-3px);
 }
 
 /* 图表容器样式 */
 .charts-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
 }
 
 .chart-item {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border-radius: 12px;
-    padding: 0;
-    box-shadow: 0 4px 15px rgba(37, 117, 252, 0.2);
-    border: 1px solid rgba(37, 117, 252, 0.3);
-    overflow: hidden;
-    animation: chartFadeIn 0.3s ease-out;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 4px 15px rgba(37, 117, 252, 0.2);
+  border: 1px solid rgba(37, 117, 252, 0.3);
+  overflow: hidden;
+  animation: chartFadeIn 0.3s ease-out;
 }
 
 @keyframes chartFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .chart-item h4 {
-    margin: 0 0 5px 0;
-    font-size: 16px;
-    color: #00d4ff;
-    font-weight: 600;
-    text-align: center;
-    padding: 15px;
-    background: rgba(0, 212, 255, 0.1);
-    border-bottom: 1px solid rgba(0, 212, 255, 0.3);
-    text-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  color: #00d4ff;
+  font-weight: 600;
+  text-align: center;
+  padding: 15px;
+  background: rgba(0, 212, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
 }
 
 .chart-canvas {
-    width: 100%;
-    height: 400px;
-    background: transparent;
-    padding: 15px;
+  width: 100%;
+  height: 400px;
+  background: transparent;
+  padding: 15px;
 }
 
 /* ECharts 图表样式 */
 .chart-canvas {
-    width: 100%;
-    height: 280px;
+  width: 100%;
+  height: 280px;
+}
+
+/* 自习室预约样式 */
+.booking-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.booking-card {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.booking-card h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2575fc;
+  border-bottom: 2px solid #2575fc;
+  padding-bottom: 6px;
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap; /* 防止在窄屏时被右侧裁切 */
+}
+
+.form-row.two > div {
+  flex: 1 1 280px; /* 在空间不足时自动换行 */
+  min-width: 0; /* 允许子元素收缩，避免内容把容器撑破 */
+}
+
+.form-row label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.form-row input,
+.form-row select {
+  width: 90%;
+  padding: 10px 12px;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  min-width: 0; /* 解决 Safari/Chrome 在 flex 下的溢出问题 */
+}
+
+.form-row input:focus,
+.form-row select:focus {
+  border-color: #2575fc;
+  box-shadow: 0 0 0 2px rgba(37, 117, 252, 0.12);
+}
+
+.hint {
+  font-size: 12px;
+  color: #888;
+}
+
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.room-item {
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fafafa;
+}
+
+.room-item:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+.room-item.selected {
+  border-color: #2575fc;
+  background: #f3f9ff;
+}
+.room-item.unavailable {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.room-name {
+  font-weight: 700;
+  color: #333;
+}
+.room-meta {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+.room-status {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #ff4757;
+}
+.room-status.ok {
+  color: #00b42a;
+}
+
+.booking-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.error-text {
+  color: #ff4757;
+  font-size: 13px;
+}
+
+.reservation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.reservation-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #f0f0f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.reservation-title {
+  font-weight: 700;
+  color: #333;
+}
+.reservation-time {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+.reservation-main {
+  display: flex;
+  flex-direction: column;
+}
+.empty {
+  color: #888;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .room-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* 响应式适配（小屏幕优化） */
 @media (max-width: 768px) {
-    .library-modal {
-        width: 95%;
-        max-height: 90vh;
-    }
+  .library-modal {
+    width: 95%;
+    max-height: 90vh;
+  }
 
-    .modal-header h2 {
-        font-size: 18px;
-    }
+  .modal-header h2 {
+    font-size: 18px;
+  }
 
-    .data-cards {
-        flex-direction: column;
-    }
+  .data-cards {
+    flex-direction: column;
+  }
 
-    .data-card {
-        min-width: auto;
-    }
+  .data-card {
+    min-width: auto;
+  }
 
-    .modal-footer {
-        flex-direction: column;
-    }
+  .modal-footer {
+    flex-direction: column;
+  }
 
-    .chart-item {
-        padding: 12px;
-    }
+  .chart-item {
+    padding: 12px;
+  }
 
-    .chart-canvas {
-        height: 200px;
-    }
+  .chart-canvas {
+    height: 200px;
+  }
 
-    .charts-container {
-        gap: 15px;
-    }
+  .charts-container {
+    gap: 15px;
+  }
 
-    .tab-item {
-        font-size: 13px;
-        padding: 8px 0;
-    }
+  .tab-item {
+    font-size: 13px;
+    padding: 8px 0;
+  }
 }
 </style>
